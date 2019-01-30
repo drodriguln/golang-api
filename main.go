@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"golang-api/handler"
 	"log"
 	"net/http"
 )
@@ -10,9 +11,9 @@ var m = http.NewServeMux()
 var s = http.Server{Addr: ":8080", Handler: m}
 
 func main() {
-	m.HandleFunc("/hash", hashHandler)
-	m.HandleFunc("/shutdown", shutdownHandler)
-	m.HandleFunc("/stats", statsHandler)
+	m.HandleFunc("/hash", handler.HashPassword)
+	m.HandleFunc("/shutdown", handler.ExecuteShutdown)
+	m.HandleFunc("/stats", handler.ProcessStats)
 
 	go func() {
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -20,7 +21,7 @@ func main() {
 		}
 	}()
 
-	if (<-shutdownCh){
+	if <- handler.IsShuttingDown {
 		if err := s.Shutdown(context.Background()); err != nil {
 			log.Fatal(err)
 		}

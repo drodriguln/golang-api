@@ -1,9 +1,8 @@
-package main
+package handler
 
 import (
 	"crypto/sha256"
 	"crypto/sha512"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -11,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestHashHandler(t *testing.T) {
+func TestHashPassword(t *testing.T) {
 	req, err := http.NewRequest("POST", "/hash", strings.NewReader("password=angryMonkey"))
 	if err != nil {
 		t.Fatal(err)
@@ -19,7 +18,7 @@ func TestHashHandler(t *testing.T) {
 
 	req.Header.Set("Content-Type", "application/form-data")
 	r := httptest.NewRecorder()
-	handler := http.HandlerFunc(hashHandler)
+	handler := http.HandlerFunc(HashPassword)
 	handler.ServeHTTP(r, req)
 
 	if status := r.Code; status != http.StatusOK {
@@ -32,14 +31,14 @@ func TestHashHandler(t *testing.T) {
 	}
 }
 
-func TestHashHandlerUnsupportedMethod(t *testing.T) {
+func TestHashPasswordUnsupportedMethod(t *testing.T) {
 	req, err := http.NewRequest("GET", "/hash", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	r := httptest.NewRecorder()
-	handler := http.HandlerFunc(hashHandler)
+	handler := http.HandlerFunc(HashPassword)
 	handler.ServeHTTP(r, req)
 
 	if status := r.Code; status != http.StatusBadRequest {
@@ -67,25 +66,4 @@ func TestHashSHA512Fail(t *testing.T) {
 	if reflect.DeepEqual(actual, expected) {
 		t.Errorf("The expected and actual SHA512 hashed bytes for the input string '%v' were unexpectedly equal.", input)
 	}
-}
-
-func TestProcess(t *testing.T) {
-	expected := HashRequestStats{1, 5123, 5123}
-	actual := HashRequestStats{}
-	actual.Process(5123)
-	if expected != actual {
-		t.Errorf("The expected and actual HashRequestStats structs for the input string '%v' were unexpectedly not equal.", 5123)
-	}
-	fmt.Println(expected)
-	fmt.Println(actual)
-}
-
-func TestProcessFail(t *testing.T) {
-	expected := HashRequestStats{1, 5123, 5123}
-	actual := HashRequestStats{}
-	if expected == actual {
-		t.Errorf("The expected and actual HashRequestStats structs for the input string '%v' were unexpectedly equal.", 5123)
-	}
-	fmt.Println(expected)
-	fmt.Println(actual)
 }
