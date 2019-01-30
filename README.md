@@ -3,7 +3,7 @@ An exercise to gain exposure with the Go language.
 
 ## Run Instructions:
 Make sure you have Go Tools installed first. 
-1. Clone this project into your $GOPATH (i.e. "/youruser/go/src/")
+1. Clone this project into your $GOPATH src directory (i.e. "/User/youruser/go/src/")
 2. Navigate the cloned project's directory.
 3. Run the command "go build" to compile the application.
 4. Execute the program generated, the default command being "./golang-api".
