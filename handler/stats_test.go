@@ -1,28 +1,45 @@
 package handler
 
 import (
-	"fmt"
+	"encoding/json"
 	"golang-api/model"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
-func TestProcess(t *testing.T) {
-	expected := model.HashRequestStats{1, 5123, 5123}
-	actual := model.HashRequestStats{}
-	actual.Process(5123)
-	if expected != actual {
-		t.Errorf("The expected and actual HashRequestStats structs for the input string '%v' should be equal.", 5123)
+func TestProcessStats(t *testing.T) {
+	req, err := http.NewRequest("GET", "/stats", nil)
+	if err != nil {
+		t.Fatal(err)
 	}
-	fmt.Println(expected)
-	fmt.Println(actual)
+
+	model.Stats = model.HashRequestStats{1, 5001,5001}
+	r := httptest.NewRecorder()
+	handler := http.HandlerFunc(ProcessStats)
+	handler.ServeHTTP(r, req)
+
+	if status := r.Code; status != http.StatusOK {
+		t.Errorf("Handler unexpectedly returned status code %v instead of %v", status, http.StatusOK)
+	}
+
+	expected, err := json.Marshal(model.Stats)
+	if r.Body.String() != string(expected) {
+		t.Errorf("Handler unexpectedly returned body %v instead of %v", r.Body.String(), string(expected))
+	}
 }
 
-func TestProcessFail(t *testing.T) {
-	expected := model.HashRequestStats{1, 5123, 5123}
-	actual := model.HashRequestStats{}
-	if expected == actual {
-		t.Errorf("The expected and actual HashRequestStats structs for the input string '%v' should not be equal.", 5123)
+func TestProcessStatsUnsupportedMethod(t *testing.T) {
+	req, err := http.NewRequest("HEAD", "/stats", nil)
+	if err != nil {
+		t.Fatal(err)
 	}
-	fmt.Println(expected)
-	fmt.Println(actual)
+
+	r := httptest.NewRecorder()
+	handler := http.HandlerFunc(ProcessStats)
+	handler.ServeHTTP(r, req)
+
+	if status := r.Code; status != http.StatusBadRequest {
+		t.Errorf("Handler unexpectedly returned status code %v instead of %v", status, http.StatusBadRequest)
+	}
 }

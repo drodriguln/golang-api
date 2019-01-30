@@ -1,3 +1,5 @@
+//+build !test
+
 package main
 
 import (
@@ -7,10 +9,10 @@ import (
 	"net/http"
 )
 
-var m = http.NewServeMux()
-var s = http.Server{Addr: ":8080", Handler: m}
-
 func main() {
+	var m = http.NewServeMux()
+	var s = http.Server{Addr: ":8080", Handler: m}
+
 	m.HandleFunc("/hash", handler.HashPassword)
 	m.HandleFunc("/shutdown", handler.ExecuteShutdown)
 	m.HandleFunc("/stats", handler.ProcessStats)

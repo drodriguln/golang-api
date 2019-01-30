@@ -17,6 +17,7 @@ func ExecuteShutdown(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		IsShuttingDown <- true
+
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf("Unsupported HTTP method '%v'", r.Method)

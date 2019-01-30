@@ -4,7 +4,10 @@ An exercise to gain exposure with the Go language.
 ## Run Instructions:
 Make sure you have Go Tools installed first. 
 1. Clone this project into your $GOPATH (i.e. "/youruser/go/src/")
-2. Run the command "go main.go" to execute the program.
+2. Navigate the cloned project's directory.
+3. Run the command "go build" to compile the application.
+4. Execute the program generated, the default command being "./golang-api".
+5. To execute the unit tests, run the command "go test -v ./...".
 
 ## API Endpoints
 1. */hash* - Accepts an HTTP POST value from a form field called "password", base64 encode it, SHA512 hash it, and then return the resulting value.
